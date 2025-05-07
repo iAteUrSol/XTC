@@ -6,14 +6,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'crypto-green': '#00c853',
-        'crypto-red': '#ff3d00',
-        'primary': '#3b82f6',
-        'secondary': '#6b7280',
-        'background': '#0f172a',
-        'card': '#1e293b',
-        'text-primary': '#f8fafc',
-        'text-secondary': '#94a3b8',
+        'crypto-green': '#16c784',
+        'crypto-red': '#ea3943',
+        'crypto-blue': '#3861fb',
+        'crypto-gray': '#222531',
+        'crypto-light-gray': '#323546',
+        'crypto-dark': '#0d1117',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -21,4 +19,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};
