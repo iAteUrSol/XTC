@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply bg-crypto-dark text-white;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .btn-primary {
+    @apply btn bg-crypto-blue hover:bg-opacity-90 text-white;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-crypto-light-gray hover:bg-opacity-80 text-white;
+  }
+  
+  .bullish {
+    @apply text-crypto-green;
+  }
+  
+  .bearish {
+    @apply text-crypto-red;
+  }
+  
+  .neutral {
+    @apply text-gray-400;
+  }
+  
+  .card {
+    @apply bg-crypto-light-gray rounded-lg p-4 shadow-md;
+  }
+}
