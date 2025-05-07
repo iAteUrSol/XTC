@@ -93,12 +93,10 @@ function Summary({ summary }) {
                   <div className="font-medium capitalize">{crypto.name}</div>
                   <div className="text-sm text-slate-400">{crypto.mentions} mentions</div>
                 </div>
-                <div className={`
-                  px-2 py-1 rounded text-xs font-semibold
-                  ${crypto.sentiment >= 0.05 ? 'bg-green-900 text-green-300' : 
-                    crypto.sentiment <= -0.05 ? 'bg-red-900 text-red-300' : 
-                    'bg-slate-600 text-slate-300'}
-                `}>
+                <div className={`text-sm font-medium ${
+                  crypto.sentiment >= 0.05 ? 'text-green-400' : 
+                  crypto.sentiment <= -0.05 ? 'text-red-400' : 'text-gray-400'
+                }`}>
                   {crypto.sentiment >= 0.05 ? 'Bullish' : 
                    crypto.sentiment <= -0.05 ? 'Bearish' : 'Neutral'}
                 </div>
@@ -107,6 +105,12 @@ function Summary({ summary }) {
           </div>
         </div>
       )}
+      
+      <div className="mt-6 flex justify-end">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm font-medium transition-colors">
+          Refresh Data
+        </button>
+      </div>
     </div>
   );
 }
