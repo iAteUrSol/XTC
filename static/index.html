@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTC - Crypto Twitter Sentinel</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>XTC - Crypto Twitter Sentinel</h1>
+            <button id="refresh-btn" class="refresh-btn">Refresh Feed</button>
+        </header>
+
+        <main>
+            <!-- Live Summary Section -->
+            <section class="summary-section">
+                <h2>LIVE SUMMARY</h2>
+                <div id="live-summary" class="summary-container">
+                    <p class="loading">Loading summary...</p>
+                </div>
+            </section>
+
+            <!-- Tabs Section -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="feed">Feed</button>
+                <button class="tab-btn" data-tab="alerts">Alerts</button>
+                <button class="tab-btn" data-tab="chat">Chat</button>
+            </div>
+
+            <!-- Feed Section -->
+            <section id="feed" class="tab-content active">
+                <h2>CRYPTO FEED</h2>
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-sentiment="all">All</button>
+                    <button class="filter-btn" data-sentiment="bullish">Bullish</button>
+                    <button class="filter-btn" data-sentiment="bearish">Bearish</button>
+                    <button class="filter-btn" data-sentiment="neutral">Neutral</button>
+                </div>
+                <div id="tweets-container" class="tweets-container">
+                    <p class="loading">Loading tweets...</p>
+                </div>
+                <button id="load-more-btn" class="load-more-btn">Load More</button>
+            </section>
+
+            <!-- Alerts Section -->
+            <section id="alerts" class="tab-content">
+                <h2>ALERTS</h2>
+                <div id="alerts-container" class="alerts-container">
+                    <p class="loading">Loading alerts...</p>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="tab-content">
+                <h2>CHAT WITH XTC</h2>
+                <div id="chat-container" class="chat-container">
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="message bot">
+                            <p>Hello! I can help you with insights about crypto Twitter. Ask me about current sentiment, trending cryptos, or specific coins!</p>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-message-input" placeholder="Ask about crypto Twitter trends...">
+                        <button id="send-message-btn">Send</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>XTC - Crypto Twitter Sentinel &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
