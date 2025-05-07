@@ -10,123 +10,141 @@ function App() {
   const [alerts, setAlerts] = useState([]);
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Function to fetch data from the API
+  // API base URL - change this to your deployment URL when deployed
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+  // Fetch data from the API
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       
       // Fetch summaries
-      const summariesResponse = await axios.get('/api/summaries');
+      const summariesResponse = await axios.get(`${API_BASE_URL}/api/summaries?limit=1`);
       setSummaries(summariesResponse.data);
       
       // Fetch alerts
-      const alertsResponse = await axios.get('/api/alerts');
+      const alertsResponse = await axios.get(`${API_BASE_URL}/api/alerts?limit=10`);
       setAlerts(alertsResponse.data);
       
       // Fetch tweets
-      const tweetsResponse = await axios.get('/api/tweets');
+      const tweetsResponse = await axios.get(`${API_BASE_URL}/api/tweets?limit=20`);
       setTweets(tweetsResponse.data);
       
-      setLoading(false);
     } catch (err) {
-      setError('Failed to fetch data. Please try again later.');
+      console.error("Error fetching data:", err);
+      setError("Failed to fetch data. Please try again later.");
+    } finally {
       setLoading(false);
     }
   };
-  
-  // Function to manually refresh data
+
+  // Trigger a feed refresh
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
       
-      // Trigger backend refresh
-      await axios.post('/api/refresh');
+      // Call the refresh endpoint
+      await axios.post(`${API_BASE_URL}/api/refresh`);
       
       // Wait a moment for the backend to process
       setTimeout(() => {
-        fetchData().then(() => {
-          setRefreshing(false);
-        });
-      }, 3000);
+        fetchData();
+        setRefreshing(false);
+      }, 5000); // Wait 5 seconds for processing
+      
     } catch (err) {
-      setError('Failed to refresh data. Please try again later.');
+      console.error("Error refreshing feed:", err);
+      setError("Failed to refresh feed. Please try again later.");
       setRefreshing(false);
     }
   };
-  
+
   // Mark an alert as read
   const markAlertRead = async (alertId) => {
     try {
-      await axios.post(`/api/alerts/${alertId}/read`);
-      // Update alerts list
+      await axios.post(`${API_BASE_URL}/api/alerts/${alertId}/read`);
+      
+      // Update local state by marking the alert as read
       setAlerts(alerts.map(alert => 
         alert.id === alertId ? { ...alert, is_read: true } : alert
       ));
+      
     } catch (err) {
-      setError('Failed to mark alert as read.');
+      console.error("Error marking alert as read:", err);
     }
   };
-  
+
+  // Chat with the AI
+  const sendChatMessage = async (message) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/chat`, { message });
+      return response.data.response;
+    } catch (err) {
+      console.error("Error sending chat message:", err);
+      return "Sorry, I couldn't process your message. Please try again.";
+    }
+  };
+
   // Fetch data on component mount
   useEffect(() => {
     fetchData();
     
-    // Set up an interval to refresh data every 5 minutes
+    // Set up a timer to refresh data every 5 minutes
     const interval = setInterval(() => {
       fetchData();
-    }, 5 * 60 * 1000);
+    }, 300000); // 5 minutes
     
-    // Clean up interval on component unmount
+    // Clean up interval on unmount
     return () => clearInterval(interval);
   }, []);
-  
+
   return (
-    <div className="min-h-screen bg-crypto-dark text-white">
+    <div className="min-h-screen bg-slate-900 text-white">
       <Header onRefresh={handleRefresh} refreshing={refreshing} />
       
-      <main className="container mx-auto px-4 py-6">
-        {loading && !refreshing ? (
-          <div className="flex justify-center items-center h-64">
-            <p className="text-xl">Loading Crypto Twitter data...</p>
+      <main className="container mx-auto px-4 py-8">
+        {error && (
+          <div className="bg-red-500 text-white p-4 rounded-lg mb-6">
+            {error}
           </div>
-        ) : error ? (
-          <div className="bg-red-900 text-white p-4 rounded-lg mb-6">
-            <p>{error}</p>
+        )}
+        
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         ) : (
-          <>
-            {/* Summary Section */}
-            <Summary 
-              summary={summaries.length > 0 ? summaries[0] : null} 
-              refreshing={refreshing} 
-            />
-            
-            {/* Main Content Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-              {/* Feed Container */}
-              <div className="lg:col-span-2">
-                <FeedContainer 
-                  alerts={alerts}
-                  tweets={tweets}
-                  markAlertRead={markAlertRead}
-                  refreshing={refreshing}
-                />
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              {/* Latest Summary */}
+              {summaries.length > 0 && (
+                <Summary summary={summaries[0]} />
+              )}
               
-              {/* Chat Panel */}
-              <div className="lg:col-span-1">
-                <ChatPanel />
-              </div>
+              {/* Feed */}
+              <FeedContainer 
+                alerts={alerts.filter(a => !a.is_read)} 
+                tweets={tweets}
+                onMarkAlertRead={markAlertRead}
+              />
             </div>
-          </>
+            
+            {/* Chat Panel */}
+            <div className="lg:col-span-1">
+              <ChatPanel sendMessage={sendChatMessage} />
+            </div>
+          </div>
         )}
       </main>
       
-      <footer className="container mx-auto px-4 py-6 text-center text-gray-500 text-sm">
-        <p>XTC - Crypto Twitter Sentinel &copy; {new Date().getFullYear()}</p>
+      <footer className="bg-slate-800 py-4 mt-12">
+        <div className="container mx-auto px-4 text-center text-slate-400">
+          <p>XTC - Crypto Twitter Sentinel &copy; {new Date().getFullYear()}</p>
+        </div>
       </footer>
     </div>
   );
