@@ -1,0 +1,13 @@
+run = "python app.py"
+language = "python3"
+entrypoint = "app.py"
+
+[env]
+PYTHONUNBUFFERED = "1"
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = "python app.py"
+deploymentTarget = "cloudrun"
